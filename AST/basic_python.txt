@@ -1,0 +1,48 @@
+
+('body', [<_ast.Assign object at 0x7ff6f48a3358>, <_ast.If object at 0x7ff6f48a3470>])
+-
+('targets', [<_ast.Name object at 0x7ff6f48a3390>])
+-
+('value', <_ast.Num object at 0x7ff6f48a3438>)
+--
+('id', 'x')
+--
+('ctx', <_ast.Store object at 0x7ff6f4917ef0>)
+--
+('n', 0)
+-
+('test', <_ast.Compare object at 0x7ff6f48a34a8>)
+-
+('body', [<_ast.Assign object at 0x7ff6f48a35c0>])
+-
+('orelse', [])
+--
+('left', <_ast.Num object at 0x7ff6f48a34e0>)
+--
+('ops', [<_ast.Eq object at 0x7ff6f489e198>])
+--
+('comparators', [<_ast.Num object at 0x7ff6f48a3550>])
+---
+('n', 1)
+---
+('n', 1)
+--
+('targets', [<_ast.Name object at 0x7ff6f48a35f8>])
+--
+('value', <_ast.BinOp object at 0x7ff6f48a3630>)
+---
+('id', 'y')
+---
+('ctx', <_ast.Store object at 0x7ff6f4917ef0>)
+---
+('left', <_ast.Name object at 0x7ff6f48a3668>)
+---
+('op', <_ast.Add object at 0x7ff6f491acf8>)
+---
+('right', <_ast.Num object at 0x7ff6f48a36a0>)
+----
+('id', 'x')
+----
+('ctx', <_ast.Load object at 0x7ff6f4917dd8>)
+----
+('n', 3)
