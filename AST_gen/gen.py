@@ -47,12 +47,14 @@ EDGE_TYPE = {
     'last_write': 4,
     'computed_from': 5,
     'return_to': 6,
+    'occurrence_of': 7,
 }
 
 NODE_TYPE = {
     'non_terminal': 0,
     'terminal': 1,
-    'identifier': 2
+    'identifier': 2,
+    'supernode': 3,
 }
 
 BOOLOP_SYMBOLS = {
@@ -115,7 +117,7 @@ class AstGraphGenerator(NodeVisitor):
         self.graph = defaultdict(set)
         self.node_label = {}
         self.node_type = {}
-        self.representations = []
+        self.representations = dict()  # list of seen variables
 
         self.terminal_path = []
 
@@ -158,6 +160,10 @@ class AstGraphGenerator(NodeVisitor):
                 and self.assign_context is not None:
             for other in self.assign_context:
                 self.graph[(nid, other)].add('computed_from')
+        if edge_type == 'occurrence_of':
+            self.graph[(nid, self.representations[label])].add('occurrence_of')
+            # print("type edge: ", edge_type)
+        # print("graph: ", self.graph)
 
     def __create_node(self, label, node_type):
         self.node_label[self.node_id] = label
@@ -171,7 +177,7 @@ class AstGraphGenerator(NodeVisitor):
         return self.node_id - 1
 
     def revisit(self, node, root):
-        ## Save state, then goes further into the tree, and at last restore the state
+        # Save state, then goes further into the tree, and at last restore the state
         old_id, old_parent, old_last_lexical, old_previous =  \
             (self.node_id, self.parent, self.last_lexical, self.previous_token)
         self.node_id = root
@@ -210,7 +216,7 @@ class AstGraphGenerator(NodeVisitor):
     def terminal(self, label):
         if not self.identifier_only:
             nid = self.__create_node(label, NODE_TYPE['terminal'])
-
+            # print("terminal + nid: ", nid)
             self.__add_edge(nid, edge_type='child')
             self.__add_edge(nid, edge_type='NextToken')
             self.__add_edge(nid, edge_type='return_to')
@@ -231,6 +237,7 @@ class AstGraphGenerator(NodeVisitor):
 
     def identifier(self, label):
         nid = self.__create_node(label, NODE_TYPE['identifier'])
+        # print("identifier + nid: ", nid)
 
         self.__add_edge(nid, edge_type='child')
         self.__add_edge(nid, edge_type='NextToken')
@@ -239,6 +246,7 @@ class AstGraphGenerator(NodeVisitor):
         self.__add_edge(nid, label=label, edge_type='last_use')
         self.__add_edge(nid, label=label, edge_type='last_write')
         self.__add_edge(nid, label=label, edge_type='computed_from')
+
 
         if not self.is_revisit:
             self.previous_token = nid
@@ -250,6 +258,16 @@ class AstGraphGenerator(NodeVisitor):
 
         if self.assign_context is not None and not self.lvalue:
             self.assign_context.add(nid)
+
+        #Adding super node
+        if label not in self.representations.keys():
+            nids = self.__create_node(label, NODE_TYPE['supernode'])
+            self.representations.update({label: nids})
+
+        self.__add_edge(nid, label=label, edge_type='occurrence_of')
+        
+        # print("list supernodes: ", self.representations)
+
 
     # --- Visitors ---
 
@@ -906,7 +924,9 @@ class AstGraphGenerator(NodeVisitor):
 
     # Helper Nodes
     def visit_arg(self, node):
-        self.terminal(node.arg)
+        # print("node arg: ", node.arg)
+        # self.terminal(node.arg)
+        self.identifier(node.arg)
 
     def visit_alias(self, node):
         gparent = self.parent

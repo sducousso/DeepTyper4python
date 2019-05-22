@@ -1,1 +1,1 @@
-def hello (str): DCNL  DCSP if len(str) == 0: DCNL  DCSP  DCSP str = 'hello' DCNL  DCSP return str
+def hello (str): DCNL  DCSP if x == 1: DCNL  DCSP  DCSP return True DCNL  DCSP return str
