@@ -30,12 +30,20 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-from ast import NodeVisitor, NodeTransformer
-from ast import And, Or
-from ast import Eq, Gt, GtE, In, Is, IsNot, Lt, LtE, NotEq, NotIn
-from ast import Invert, Not, UAdd, USub
-from ast import If, Name
-from ast import Add,     Sub,     Mult,     Div,     FloorDiv,     Mod,     LShift,     RShift,     BitOr,     BitAnd,     BitXor,     Pow
+# import typed_ast.ast3 as ast
+from typed_ast.ast3 import NodeVisitor
+from typed_ast.ast3 import And, Or
+from typed_ast.ast3 import Eq, Gt, GtE, In, Is, IsNot, Lt, LtE, NotEq, NotIn
+from typed_ast.ast3 import Invert, Not, UAdd, USub
+from typed_ast.ast3 import If, Name
+from typed_ast.ast3 import Add,     Sub,     Mult,     Div,     FloorDiv,     Mod,     LShift,     RShift,     BitOr,     BitAnd,     BitXor,     Pow
+# import ast
+# from ast import NodeVisitor, NodeTransformer
+# from ast import And, Or
+# from ast import Eq, Gt, GtE, In, Is, IsNot, Lt, LtE, NotEq, NotIn
+# from ast import Invert, Not, UAdd, USub
+# from ast import If, Name
+# from ast import Add,     Sub,     Mult,     Div,     FloorDiv,     Mod,     LShift,     RShift,     BitOr,     BitAnd,     BitXor,     Pow
 
 from collections import defaultdict
 
@@ -118,6 +126,8 @@ class AstGraphGenerator(NodeVisitor):
         self.node_label = {}
         self.node_type = {}
         self.representations = dict()  # list of seen variables
+        # Contains the type annotations and hits of variables
+        self.annotation_types = []
 
         self.terminal_path = []
 
@@ -133,10 +143,12 @@ class AstGraphGenerator(NodeVisitor):
         self.is_revisit = False
         self.lvalue = False
         self.last_access = defaultdict(lambda: [set(), set()])
+        # print("init node visitor")
 
     # --- ID and Edge manipulation ----
 
     def __add_edge(self, nid, label=None, edge_type='child'):
+        # print("add_edge")
         if edge_type == 'child' and self.parent is not None \
                 and self.use_ast and not self.is_revisit:
             self.graph[(self.parent, nid)].add('child')
@@ -235,7 +247,7 @@ class AstGraphGenerator(NodeVisitor):
         else:
             pass
 
-    def identifier(self, label):
+    def identifier(self, label, ann_type):
         nid = self.__create_node(label, NODE_TYPE['identifier'])
         # print("identifier + nid: ", nid)
 
@@ -246,7 +258,6 @@ class AstGraphGenerator(NodeVisitor):
         self.__add_edge(nid, label=label, edge_type='last_use')
         self.__add_edge(nid, label=label, edge_type='last_write')
         self.__add_edge(nid, label=label, edge_type='computed_from')
-
 
         if not self.is_revisit:
             self.previous_token = nid
@@ -259,19 +270,26 @@ class AstGraphGenerator(NodeVisitor):
         if self.assign_context is not None and not self.lvalue:
             self.assign_context.add(nid)
 
-        #Adding super node
+        # Adding super node
         if label not in self.representations.keys():
             nids = self.__create_node(label, NODE_TYPE['supernode'])
             self.representations.update({label: nids})
 
-        self.__add_edge(nid, label=label, edge_type='occurrence_of')
-        
-        # print("list supernodes: ", self.representations)
+        if ann_type is not None:
+            self.annotation_types.append([nid, ann_type])
 
+        self.__add_edge(nid, label=label, edge_type='occurrence_of')
+
+        # print("list supernodes: ", self.representations)
 
     # --- Visitors ---
 
+    # def visit_Module(self, node):
+        # print(node.body)
+        # self.visit(node.body[0])
+
     def body(self, statements, root=None):
+        # print("hello")
         self.new_line = True
         for stmt in statements:
             if root is None:
@@ -288,12 +306,16 @@ class AstGraphGenerator(NodeVisitor):
                 node.orelse, root=self.node_id if root is not None else None)
 
     def list_nodes(self, lnodes):
+        # print("hello")
         for idx, nodes in enumerate(lnodes):
             self.terminal(', ' if idx else '')
             self.visit(nodes)
 
     def signature(self, node):
         want_comma = []
+        # print("signature: node = ", node)
+        # print("signature: node args = ", node.args)
+        # print("signature: node defaults = ", node.defaults)
 
         def write_comma():
             if want_comma:
@@ -305,6 +327,8 @@ class AstGraphGenerator(NodeVisitor):
         for arg, default in zip(node.args, padding + node.defaults):
             write_comma()
             self.visit(arg)
+            # print("signature: arg= ", arg)
+            # print("signature: arg ann= ", arg.annotation.id)
             if default is not None:
                 self.terminal('=')
                 self.visit(default)
@@ -328,7 +352,7 @@ class AstGraphGenerator(NodeVisitor):
         for idx, target in enumerate(node.targets):
             if idx:
                 self.terminal('=')
-            self.visit(target)
+            self._visit_Name(target, None)
         self.syntactic_only = False
 
         self.terminal('=')
@@ -363,6 +387,25 @@ class AstGraphGenerator(NodeVisitor):
         self.assign_context = None
         self.parent = gparent
 
+    def visit_AnnAssign(self, node):
+        gparent = self.parent
+        self.non_terminal(node)
+        lside_id = self.node_id
+        self.syntactic_only = True
+        self._visit_Name(node.target, node.annotation.id)
+        self.syntactic_only = False
+
+        self.terminal('=')
+        self.assign_context = set()
+        self.visit(node.value)
+
+        self.lvalue = True
+        lside_id = self.revisit(node.target, root=lside_id) + \
+                (1 if not self.identifier_only else 0)
+        self.lvalue = False
+        self.assign_context = None
+        self.parent = gparent
+
     def visit_ImportFrom(self, node):
         gparent = self.parent
         self.non_terminal(node)
@@ -393,6 +436,7 @@ class AstGraphGenerator(NodeVisitor):
         self.parent = gparent
 
     def visit_FunctionDef(self, node):
+        # print("hello")
         gparent = self.parent
         top_function = self.current_function
         self.current_function = self.node_id
@@ -703,10 +747,10 @@ class AstGraphGenerator(NodeVisitor):
         self.terminal(')')
         self.parent = gparent
 
-    def visit_Name(self, node):
+    def _visit_Name(self, node, ann_type):
         gparent = self.parent
         self.non_terminal(node)
-        self.identifier(node.id)
+        self.identifier(node.id, ann_type)
         self.parent = gparent
 
     def visit_NameConstant(self, node):
@@ -799,6 +843,10 @@ class AstGraphGenerator(NodeVisitor):
         self.terminal('(')
         self.visit(node.left)
         for op, right in zip(node.ops, node.comparators):
+            # print(dir(self))
+            # print(type(op))
+            # print(CMPOP_SYMBOLS[type(op)])
+            # print(CMPOP_SYMBOLS.keys())
             self.terminal(' %s ' % CMPOP_SYMBOLS[type(op)])
             self.visit(right)
         self.terminal(')')
@@ -926,7 +974,8 @@ class AstGraphGenerator(NodeVisitor):
     def visit_arg(self, node):
         # print("node arg: ", node.arg)
         # self.terminal(node.arg)
-        self.identifier(node.arg)
+        print("visit arg node: ", node)
+        self.identifier(node.arg, node.annotation.id)
 
     def visit_alias(self, node):
         gparent = self.parent

@@ -1,4 +1,6 @@
-import ast
+import astpretty
+# import ast
+import typed_ast.ast3 as ast3
 import sys
 
 '''
@@ -8,7 +10,7 @@ Take file name in command line argument
 
 
 def print_node_value(node, str):
-    for f in ast.iter_fields(node):
+    for f in ast3.iter_fields(node):
         print(str)
         print(f)
 
@@ -16,7 +18,7 @@ def print_node_value(node, str):
 def visit(node, handle_node, str):
     handle_node(node, str)
     str = str + "-"
-    for child in ast.iter_child_nodes(node):
+    for child in ast3.iter_child_nodes(node):
         visit(child, handle_node, str)
 
 
@@ -27,7 +29,7 @@ def main():
         exit()
 
     with open(sys.argv[1], "r") as source:
-        tree = ast.parse(source.read())
+        tree = ast3.parse(source.read())
         visit(tree, print_node_value, str)
 
 

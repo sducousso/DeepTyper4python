@@ -18,7 +18,7 @@ class ChemModel(object):
     def default_params(cls):
         return {
             # 'num_epochs': 3000,
-            'num_epochs': 30,
+            'num_epochs': 1,
             'patience': 25,
             'learning_rate': 0.001,
             'clamp_gradient_norm': 1.0,
@@ -33,8 +33,10 @@ class ChemModel(object):
 
             'random_seed': 0,
 
-            'train_file': 'molecules_train.json',
-            'valid_file': 'molecules_valid.json'
+            # 'train_file': 'molecules_train.json',
+            'train_file': 'molecules_train_short.json',
+            # 'valid_file': 'molecules_valid.json'
+            'valid_file': 'molecules_valid_short.json'
         }
 
     def __init__(self, args):

@@ -57,7 +57,8 @@ class DenseGGNNChemModel(ChemModel):
     def default_params(cls):
         params = dict(super().default_params())
         params.update({
-                        'batch_size': 256,
+                        # 'batch_size': 256,
+                        'batch_size': 1,
                         'graph_state_dropout_keep_prob': 1.,
                         'task_sample_ratios': {},
                         'use_edge_bias': True,
@@ -209,6 +210,7 @@ class DenseGGNNChemModel(ChemModel):
 
             num_graphs = len(batch_data['init'])
             initial_representations = batch_data['init']
+
             initial_representations = self.pad_annotations(initial_representations)
 
             batch_feed_dict = {

@@ -7,7 +7,8 @@ Options:
     --debug                    Enable debug routines. [default: False]
     --task-type                The type of task to extract this. Either "func-doc" or "func-name". Defaults to "func-doc".
 """
-from ast import parse
+# from ast import parse
+from typed_ast.ast3 import parse
 from collections import defaultdict
 from docopt import docopt
 import re
@@ -15,6 +16,10 @@ import json
 
 from utils import save_jsonl_gz
 from gen import AstGraphGenerator
+
+import traceback
+
+import astpretty
 
 
 # Extracts function names
@@ -48,7 +53,8 @@ def process_data(inputs, outputs, task_type):
                       (idx / float(len(inputs)) * 100), end="")
 
             visitor = AstGraphGenerator()
-            visitor.visit(parse(inp))
+            # astpretty.pprint(parse(inp, mode='exec'))
+            visitor.visit(parse(inp, mode='exec'))
 
             edge_list = [(t, origin, destination)
                          for (origin, destination), edges
@@ -64,10 +70,14 @@ def process_data(inputs, outputs, task_type):
 
             data.append({"edges": edge_list,
                          "backbone_sequence": visitor.terminal_path,
-                         "node_labels": graph_node_labels})
+                         "node_labels": graph_node_labels,
+                         "annotation_type": visitor.annotation_types})
 
         except Exception as e:
+            print(e)
+            print(inp)
             errors += 1
+            traceback.print_exc()
 
     print("Generated %d graphs out of %d snippets" %
           (len(inputs) - errors, len(inputs)))
@@ -87,23 +97,29 @@ def main():
     # Reads files
     with open(code_data) as f:
         inputs = f.readlines()
+        # inputs = f.read()
     with open(docs_data, 'rb') as f:
         labels = [line.decode(encoding='utf-8', errors='ignore') for line in f]
 
     # Clean code putting back newline and tab
+    # print(inputs)
     inputs = [inp.replace("DCNL ", "\n").replace(
         " DCSP ", "\t") for inp in inputs]
 
     # unident body so it can be parsed
-    if task_type == 'func-name':
-        inputs = ["\n".join([line[2 if not idx and line[1] == "\t" else 1:]
-                             for idx, line in enumerate(inp.split("\n"))]) for inp in inputs]
+    # if task_type == 'func-name':
+    #     inputs = ["\n".join([line[2 if not idx and line[1] == "\t" else 1:]
+    #                          for idx, line in enumerate(inp.split("\n"))]) for inp in inputs]
 
     # Clean labels putting back newline and tab
-    labels = [label.replace("DCNL ", "\n").replace("DCSP ", "\t")
-              for label in labels]
+    # labels = [label.replace("DCNL ", "\n").replace("DCSP ", "\t")
+    #           for label in labels]
 
-    assert len(labels) == len(inputs)
+    # inputs = ['def hello (str): \n\tif x == 1: \n\t\treturn True \n\treturn str\n',
+    #           'def slice (string: str, start: int, end: int) -> str: \n\treturn string[start:end]']
+
+    # assert len(labels) == len(inputs)
+    # print(inputs)
 
     # graphs, docs = process_data(inputs, labels, task_type)
     graphs = process_data(inputs, labels, task_type)

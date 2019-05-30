@@ -20,6 +20,7 @@ AST_gen/._summary.jsonl.gz
 AST_gen/._summary.jsonl
 AST_gen/test*.json
 AST_gen.*.png
+AST_gen/download_data/data_repos
 
 # GGNN samples
 
@@ -28,6 +29,8 @@ gated-graph-neural-network-samples/data
 gated-graph-neural-network-samples/2019*.json
 gated-graph-neural-network-samples/2019*.pickle
 gated-graph-neural-network-samples/molecules*.json
+gated-graph-neural-network-samples/*.txt
 
-
+#
+part-ii-project
 
