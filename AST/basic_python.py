@@ -7,5 +7,11 @@ def slice(s: str, start, end: int) -> str:
     return "a"
 
 
-def test(x):  # type: int -> str
+def test(x):
     return "b"
+
+
+def hints(y):  # type: int -> str
+    z = 0  # type: int
+    s, t = "a", "b"
+    return ""

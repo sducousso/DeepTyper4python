@@ -1,2 +1,2 @@
-def hello (): DCNL  DCSP x = 4  # type: int DCNL  DCSP return False
-def slice (s: str, start: int, end: int) -> str: DCNL  DCSP y:bool = True DCNL  DCSP return string[start:end]
+def hello (): # type: () -> bool DCNL  DCSP x = 4  # type: int DCNL  DCSP return False
+def slice (s: str, start: int, end: int) -> str: DCNL  DCSP y = True DCNL  DCSP return string[start:end]

@@ -247,7 +247,7 @@ class AstGraphGenerator(NodeVisitor):
         else:
             pass
 
-    def identifier(self, label, ann_type):
+    def identifier(self, label, ann_type=None):
         nid = self.__create_node(label, NODE_TYPE['identifier'])
         # print("identifier + nid: ", nid)
 
@@ -352,7 +352,11 @@ class AstGraphGenerator(NodeVisitor):
         for idx, target in enumerate(node.targets):
             if idx:
                 self.terminal('=')
-            self._visit_Name(target, None)
+            if node.type_comment is not None:
+                self._visit_Name(target, node.type_comment.strip())
+            else: 
+                self._visit_Name(target)
+
         self.syntactic_only = False
 
         self.terminal('=')
@@ -444,7 +448,14 @@ class AstGraphGenerator(NodeVisitor):
 
         self.decorators(node)
         self.terminal('def')
-        self.terminal(node.name)
+        # self.terminal(node.name)
+        t = None
+        if node.returns is not None:
+            t = node.returns.id
+        elif node.type_comment is not None:
+            t = node.type_comment.split("->")[-1].strip()
+        self.identifier(node.name, t)
+        
         self.terminal('(')
         self.signature(node.args)
         self.terminal(')')
@@ -747,7 +758,7 @@ class AstGraphGenerator(NodeVisitor):
         self.terminal(')')
         self.parent = gparent
 
-    def _visit_Name(self, node, ann_type):
+    def _visit_Name(self, node, ann_type=None):
         gparent = self.parent
         self.non_terminal(node)
         self.identifier(node.id, ann_type)
@@ -974,7 +985,7 @@ class AstGraphGenerator(NodeVisitor):
     def visit_arg(self, node):
         # print("node arg: ", node.arg)
         # self.terminal(node.arg)
-        print("visit arg node: ", node)
+        # print("visit arg node: ", node)
         self.identifier(node.arg, node.annotation.id)
 
     def visit_alias(self, node):
