@@ -4,7 +4,7 @@ def slice(s: str, start, end: int) -> str:
     if start < 0:
         help: int = 0
         sos = False  # type: bool
-    return "a"
+    return s[start:end]
 
 
 def test(x):

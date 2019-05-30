@@ -20,12 +20,9 @@ from gen import AstGraphGenerator
 import traceback
 
 import astpretty
-import os
-import sys
+
 
 # Extracts function names
-
-
 def decl_tokenizer(decl):
     function_name = re.search('(?<=def )[\w_-]+(?=\(.*\):)', decl).group(0)
     return splitter(function_name)
@@ -41,21 +38,19 @@ def docstring_tokenize(docstr: str):
     return [t for t in docstring_regex_tokenizer.findall(docstr) if t is not None and len(t) > 0]
 
 
-def process_data(inputs):
+def process_data(inputs, outputs, task_type):
     # Global calculs and formating
 
     data, graph_node_labels, docs_words = [], [], []
     # num_inits, errors = 0, 0
     errors = 0
     doc_tokenizer = docstring_tokenize
-
-    for idx, inp in enumerate(inputs):
-        # print("in inp: ", inp)
+    # print("inputs processed: ", inputs)
+    for idx, (inp, output) in enumerate(zip(inputs, outputs)):
         try:
             if idx % 100 == 0:
                 print('%.1f %%    \r' %
                       (idx / float(len(inputs)) * 100), end="")
-
             visitor = AstGraphGenerator()
             # astpretty.pprint(parse(inp, mode='exec'))
             visitor.visit(parse(inp, mode='exec'))
@@ -63,6 +58,11 @@ def process_data(inputs):
             edge_list = [(t, origin, destination)
                          for (origin, destination), edges
                          in visitor.graph.items() for t in edges]
+
+            # if task_type == "func-doc":
+            #     docs_words.append(doc_tokenizer(output))
+            # if task_type == "body-name":
+            #     docs_words.append(decl_tokenizer(output))
 
             graph_node_labels = [label.strip() for (
                 _, label) in sorted(visitor.node_label.items())]
@@ -81,54 +81,48 @@ def process_data(inputs):
     print("Generated %d graphs out of %d snippets" %
           (len(inputs) - errors, len(inputs)))
 
+    # return data, docs_words
     return data
-
-
-def explore_files(walk_dir):
-    inp = []
-    for root, subdirs, files in os.walk(walk_dir):
-        # print('--\nroot = ' + root)
-
-        for subdir in subdirs:
-            # print('\t- subdirectory ' + subdir)
-            inp = inp + explore_files(subdir)
-            # print("ext: ", ext)
-        for filename in files:
-            file_path = os.path.join(root, filename)
-            # print('\t- file %s (full path: %s)' % (filename, file_path))
-
-            with open(file_path, encoding="ISO-8859-1") as f:
-                # print(f_content)
-                f_content = f.read()
-                f_content = f_content.replace("    ", '\t')
-                inp.append(f_content)
-
-    # print('inp ret: ', inp)
-    return inp
 
 
 def main():
     # Get arguments from command line
+    args = docopt(__doc__)
+    code_data = args['INPUT_CODE_DATA']
+    docs_data = args['INPUT_DOCS_DATA']
 
-    if len(sys.argv) < 2:
-        print("missing repos master directory")
-        exit(1)
-    print("Exploring folders ...")
-    walk_dir = sys.argv[1]
-    inputs = explore_files(walk_dir)
+    task_type = args.get('--task_type', "func-doc")
 
+    # Reads files
+    with open(code_data) as f:
+        inputs = f.readlines()
+
+    with open(docs_data, 'rb') as f:
+        labels = [line.decode(encoding='utf-8', errors='ignore') for line in f]
+
+    # Clean code putting back newline and tab
     # print(inputs)
-    # inputs = ['y: int = 0\nif x == 0:\n\tprint("hello")\n',
-    #           'def slice(string: str, start: int, end: int) -> str:\n\treturn string[start:end]\n']
-    #   inputs = ['x:int = 0 \nif x == 0: \n\tprint("hello")\n',
-    #   'def slice (string: str, start: int, end: int) -> str: \n\treturn string[start:end]']
+    inputs = [inp.replace("DCNL ", "\n").replace(
+        " DCSP ", "\t") for inp in inputs]
 
-    # print("inputs: ", inputs)
-    print("Start processing inputs.")
-    graphs = process_data(inputs)
+    # unident body so it can be parsed
+    # if task_type == 'func-name':
+    #     inputs = ["\n".join([line[2 if not idx and line[1] == "\t" else 1:]
+    #                          for idx, line in enumerate(inp.split("\n"))]) for inp in inputs]
+
+    # Clean labels putting back newline and tab
+    # labels = [label.replace("DCNL ", "\n").replace("DCSP ", "\t")
+    #           for label in labels]
+
+    assert len(labels) == len(inputs)
+    print(inputs)
+    # labels = [""]
+    # graphs, docs = process_data(inputs, labels, task_type)
+    graphs = process_data(inputs, labels, task_type)
 
     # Save results
-    save_jsonl_gz("._graphs.jsonl.gz", graphs)
+    save_jsonl_gz(args['OUT_FILE_PREFIX'] +
+                  "_graphs.jsonl.gz", graphs)
     # save_jsonl_gz(args['OUT_FILE_PREFIX'] + "_summary.jsonl.gz", docs)
 
 

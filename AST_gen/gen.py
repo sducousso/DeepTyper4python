@@ -986,7 +986,10 @@ class AstGraphGenerator(NodeVisitor):
         # print("node arg: ", node.arg)
         # self.terminal(node.arg)
         # print("visit arg node: ", node)
-        self.identifier(node.arg, node.annotation.id)
+        t = None
+        if node.annotation is not None:
+            t = node.annotation.id
+        self.identifier(node.arg, t)
 
     def visit_alias(self, node):
         gparent = self.parent

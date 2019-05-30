@@ -21,6 +21,7 @@ AST_gen/._summary.jsonl
 AST_gen/test*.json
 AST_gen.*.png
 AST_gen/download_data/data_repos
+AST_gen/mock_data/data_repos
 
 # GGNN samples
 

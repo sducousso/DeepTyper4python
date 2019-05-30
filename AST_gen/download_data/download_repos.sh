@@ -18,3 +18,6 @@ done < "$1"
 
 find . -type f ! -name "*.py" -exec rm {} \;
 find . -type d -empty -delete
+
+#Remove symbolic links
+find . -type l -delete

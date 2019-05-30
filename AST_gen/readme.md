@@ -2,9 +2,14 @@
 
 Have some function declaration in *data_ps.declbodies.train*. Mind that newline are replaced by DCNL and tabs by DCSP with 2 spaces between those delimiters.
 ```
-python3 loadbarone.py ./{data_ps.declbodies.train,data_ps.descriptions.train} .
+python3 loadbarone.1.py ./{data_ps.declbodies.train,data_ps.descriptions.train} .
 ```
 Graph will be in *._graphs.jsonl.gz* and documentation in *._summary.jsonl.gz*.
+
+To pipe from git repos:
+```
+python3 loadbarone.py downlaod_data/data_repos/
+```
 
 # Full working example
 
