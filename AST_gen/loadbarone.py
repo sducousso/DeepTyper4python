@@ -10,7 +10,7 @@ Options:
 # from ast import parse
 from typed_ast.ast3 import parse
 from collections import defaultdict
-from docopt import docopt
+# from docopt import docopt
 import re
 import json
 
@@ -22,6 +22,8 @@ import traceback
 import astpretty
 import os
 import sys
+from split import groupby
+
 
 # Extracts function names
 
@@ -67,10 +69,38 @@ def process_data(inputs):
             graph_node_labels = [label.strip() for (
                 _, label) in sorted(visitor.node_label.items())]
 
+            ann_types = visitor.annotation_types
+
+            occurrences = [
+                [edge[0], edge[1], edge[2]] for edge in edge_list if edge[0] == "occurrence_of"]
+            occurrences = [[k, list(i)]
+                           for k, i in groupby(lambda edge: edge[2], occurrences)]
+
+            # Assign majority type for each supernode
+            for supernode in occurrences:
+                type_found = []
+                index_occurrence = 1
+                i = 0
+                for elem in supernode[1]:
+                    node = elem[1]
+                    matches = [ann for ann in ann_types if ann[0] == node]
+                    print("matches: ", matches)
+                    if len(matches) > 0:
+                        assert len(matches) == 1
+                        type_found.append(matches[0][1])
+                if len(type_found) > 0:
+                    type_found = sorted(
+                        type_found, key=type_found.count, reverse=True)
+                    print("sorted types: ", type_found)
+                    ann_types.append([supernode[0], type_found[0]])
+
+            print(occurrences)
+            print(ann_types)
+
             data.append({"edges": edge_list,
                          "backbone_sequence": visitor.terminal_path,
                          "node_labels": graph_node_labels,
-                         "annotation_type": visitor.annotation_types})
+                         "annotation_type": ann_types})
 
         except Exception as e:
             print(e)

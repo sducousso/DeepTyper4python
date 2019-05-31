@@ -21,8 +21,9 @@ import traceback
 
 import astpretty
 
-
 # Extracts function names
+
+
 def decl_tokenizer(decl):
     function_name = re.search('(?<=def )[\w_-]+(?=\(.*\):)', decl).group(0)
     return splitter(function_name)
@@ -115,7 +116,7 @@ def main():
     #           for label in labels]
 
     assert len(labels) == len(inputs)
-    print(inputs)
+    # print(inputs)
     # labels = [""]
     # graphs, docs = process_data(inputs, labels, task_type)
     graphs = process_data(inputs, labels, task_type)
