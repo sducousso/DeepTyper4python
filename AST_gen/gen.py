@@ -280,6 +280,7 @@ class AstGraphGenerator(NodeVisitor):
             self.representations.update({label: nids})
 
         if ann_type is not None:
+            ann_type = ann_type.split('#')[0]
             self.annotation_types.append([nid, ann_type])
 
         self.__add_edge(nid, label=label, edge_type='occurrence_of')
@@ -459,7 +460,8 @@ class AstGraphGenerator(NodeVisitor):
         if node.returns is not None and hasattr(node.returns, 'id'):
             t = node.returns.id
         elif node.type_comment is not None:
-            t = node.type_comment.split("->")[-1].strip()
+            t = node.type_comment
+            t = t.split("->")[-1].strip()
         self.identifier(node.name, t)
 
         self.terminal('(')
@@ -1005,7 +1007,6 @@ class AstGraphGenerator(NodeVisitor):
         t = None
         if node.annotation is not None:
             t = t_master(node.annotation)
-
         self.identifier(node.arg, t)
 
     def visit_alias(self, node):

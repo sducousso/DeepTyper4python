@@ -62,6 +62,8 @@ def t_ellipsis(node):
 
 def t_name_constante(node):
     assert hasattr(node, 'value')
+    if node.value is None:
+        return 'None'
     return node.value
 
 
