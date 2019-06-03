@@ -1,5 +1,5 @@
-def slice(string: str, start: int, end: int) -> str:
-    x: int = 0
-    x: str = "a"
-    x: str = "b"
-    return string[start:end]
+from typing import Optional
+
+
+def slice(x: Optional[int]) -> bool:
+    return False

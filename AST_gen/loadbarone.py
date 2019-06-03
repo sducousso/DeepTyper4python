@@ -50,10 +50,11 @@ def process_data(inputs):
     # num_inits, errors = 0, 0
     errors = 0
     doc_tokenizer = docstring_tokenize
+    passed = 0
 
     for idx, inp in enumerate(inputs):
-        # print("in inp: ", inp)
         try:
+            # print("in inp: ", inp)
             if idx % 100 == 0:
                 print('%.1f %%    \r' %
                       (idx / float(len(inputs)) * 100), end="")
@@ -79,28 +80,34 @@ def process_data(inputs):
             # Assign majority type for each supernode
             for supernode in occurrences:
                 type_found = []
-                index_occurrence = 1
-                i = 0
                 for elem in supernode[1]:
                     node = elem[1]
+                    # print("elem: ", elem)
                     matches = [ann for ann in ann_types if ann[0] == node]
-                    print("matches: ", matches)
+                    # print("matches: ", matches)
+                    # if len(graph_node_labels) > 65:
+                    # print("65: ", graph_node_labels[65])
                     if len(matches) > 0:
-                        assert len(matches) == 1
+                        # print("matches: ", matches)
+                        if len(matches) != 1:
+                            graph_node_labels = [
+                                g for g in graph_node_labels if g != matches[0]]
+                            graph_node_labels.append(matches[0])
                         type_found.append(matches[0][1])
                 if len(type_found) > 0:
                     type_found = sorted(
                         type_found, key=type_found.count, reverse=True)
-                    print("sorted types: ", type_found)
+                    # print("sorted types: ", type_found)
                     ann_types.append([supernode[0], type_found[0]])
 
-            print(occurrences)
-            print(ann_types)
+            # print(occurrences)
+            # print(ann_types)
 
             data.append({"edges": edge_list,
                          "backbone_sequence": visitor.terminal_path,
                          "node_labels": graph_node_labels,
                          "annotation_type": ann_types})
+            passed += 1
 
         except Exception as e:
             print(e)
@@ -110,6 +117,7 @@ def process_data(inputs):
 
     print("Generated %d graphs out of %d snippets" %
           (len(inputs) - errors, len(inputs)))
+    print("Passed: ", passed)
 
     return data
 

@@ -1,0 +1,31 @@
+annotation=Subscript(
+	lineno=297,
+	col_offset=29,
+	value=Name(lineno=297, col_offset=29, id='Optional', ctx=Load()),
+	slice=Index(
+		value=Subscript(
+			lineno=298,
+			col_offset=26,
+			value=Name(lineno=298, col_offset=26, id='Union', ctx=Load()),
+			slice=Index(
+				value=Tuple(
+					lineno=298,
+					col_offset=32,
+					elts=[
+						Name(lineno=298, col_offset=32, id='int', ctx=Load()),
+						Name(lineno=298, col_offset=37, id='float', ctx=Load()),
+						Attribute(
+							lineno=298,
+							col_offset=44,
+							value=Name(lineno=298, col_offset=44, id='datetime', ctx=Load()),
+							attr='datetime',
+							ctx=Load(),
+						),
+						Name(lineno=298, col_offset=63, id='str', ctx=Load()),
+					],
+					ctx=Load(),
+				),
+			),
+			ctx=Load(),
+		),
+	),

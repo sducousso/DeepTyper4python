@@ -31,12 +31,13 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 # import typed_ast.ast3 as ast
+import typed_ast
 from typed_ast.ast3 import NodeVisitor
 from typed_ast.ast3 import And, Or
 from typed_ast.ast3 import Eq, Gt, GtE, In, Is, IsNot, Lt, LtE, NotEq, NotIn
 from typed_ast.ast3 import Invert, Not, UAdd, USub
 from typed_ast.ast3 import If, Name
-from typed_ast.ast3 import Add,     Sub,     Mult,     Div,     FloorDiv,     Mod,     LShift,     RShift,     BitOr,     BitAnd,     BitXor,     Pow
+from typed_ast.ast3 import Add,     Sub,     Mult,     Div,     FloorDiv,     Mod,     LShift,     RShift,     BitOr,     BitAnd,     BitXor,     Pow, MatMult
 # import ast
 # from ast import NodeVisitor, NodeTransformer
 # from ast import And, Or
@@ -46,6 +47,8 @@ from typed_ast.ast3 import Add,     Sub,     Mult,     Div,     FloorDiv,     Mo
 # from ast import Add,     Sub,     Mult,     Div,     FloorDiv,     Mod,     LShift,     RShift,     BitOr,     BitAnd,     BitXor,     Pow
 
 from collections import defaultdict
+
+from gen_types import t_master
 
 EDGE_TYPE = {
     'child': 0,
@@ -82,7 +85,8 @@ BINOP_SYMBOLS = {
     BitOr:      '|',
     BitAnd:     '&',
     BitXor:     '^',
-    Pow:        '**'
+    Pow:        '**',
+    MatMult:    '*.'
 }
 
 CMPOP_SYMBOLS = {
@@ -354,13 +358,14 @@ class AstGraphGenerator(NodeVisitor):
                 self.terminal('=')
             if node.type_comment is not None:
                 self._visit_Name(target, node.type_comment.strip())
-            else: 
+            else:
                 self._visit_Name(target)
 
         self.syntactic_only = False
 
         self.terminal('=')
         self.assign_context = set()
+        assert node.value is not None
         self.visit(node.value)
 
         self.lvalue = True
@@ -396,16 +401,17 @@ class AstGraphGenerator(NodeVisitor):
         self.non_terminal(node)
         lside_id = self.node_id
         self.syntactic_only = True
-        self._visit_Name(node.target, node.annotation.id)
+        self._visit_Name(node.target, t_master(node.annotation))
         self.syntactic_only = False
 
         self.terminal('=')
         self.assign_context = set()
-        self.visit(node.value)
+        if node.value is not None:
+            self.visit(node.value)
 
         self.lvalue = True
         lside_id = self.revisit(node.target, root=lside_id) + \
-                (1 if not self.identifier_only else 0)
+            (1 if not self.identifier_only else 0)
         self.lvalue = False
         self.assign_context = None
         self.parent = gparent
@@ -450,12 +456,12 @@ class AstGraphGenerator(NodeVisitor):
         self.terminal('def')
         # self.terminal(node.name)
         t = None
-        if node.returns is not None:
+        if node.returns is not None and hasattr(node.returns, 'id'):
             t = node.returns.id
         elif node.type_comment is not None:
             t = node.type_comment.split("->")[-1].strip()
         self.identifier(node.name, t)
-        
+
         self.terminal('(')
         self.signature(node.args)
         self.terminal(')')
@@ -761,7 +767,10 @@ class AstGraphGenerator(NodeVisitor):
     def _visit_Name(self, node, ann_type=None):
         gparent = self.parent
         self.non_terminal(node)
-        self.identifier(node.id, ann_type)
+        if hasattr(node, "id"):
+            self.identifier(node.id, ann_type)
+        elif hasattr(node, "value.id"):
+            self.identifier(node.value.id, ann_type)
         self.parent = gparent
 
     def visit_NameConstant(self, node):
@@ -823,7 +832,13 @@ class AstGraphGenerator(NodeVisitor):
         for idx, (key, value) in enumerate(zip(node.keys, node.values)):
             if idx:
                 self.terminal(',')
-            self.visit(key)
+            # print("KEY: ", key)
+            # print("idx: ", idx)
+            # print("len keys: ", len(node.keys))
+            if key is None:
+                self.terminal('None')
+            else:
+                self.visit(key)
             self.terminal(':')
             self.visit(value)
         self.terminal('}')
@@ -909,7 +924,8 @@ class AstGraphGenerator(NodeVisitor):
         gparent = self.parent
         self.non_terminal(node)
         self.terminal('yield')
-        self.visit(node.value)
+        if node.value is not None:
+            self.visit(node.value)
         self.parent = gparent
 
     def visit_Lambda(self, node):
@@ -988,7 +1004,8 @@ class AstGraphGenerator(NodeVisitor):
         # print("visit arg node: ", node)
         t = None
         if node.annotation is not None:
-            t = node.annotation.id
+            t = t_master(node.annotation)
+
         self.identifier(node.arg, t)
 
     def visit_alias(self, node):

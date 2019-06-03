@@ -7,11 +7,16 @@ def slice(s: str, start, end: int) -> str:
     return s[start:end]
 
 
-def test(x):
-    return "b"
+def test(x: 'int'):
+    y: 'int'
+    return len(x)
 
 
 def hints(y):  # type: int -> str
     z = 0  # type: int
     s, t = "a", "b"
     return ""
+
+
+class Color(NamedTuple):
+    color: str
