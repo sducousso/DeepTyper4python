@@ -23,6 +23,32 @@ import astpretty
 import os
 import sys
 from split import groupby
+from pprint import pprint
+
+# Monitoring
+
+
+class Monitoring:
+    def __init__(self):
+        self.count = 0
+        self.errors = []
+        self.file = ""
+        self.empty_files = []
+
+    def increment_count(self):
+        self.count += 1
+
+    def found_error(self, err, trace):
+        self.errors.append([self.file, err, trace])
+
+    def treat_file(self, filename):
+        self.file = filename
+
+
+# Save file
+def save(data):
+    with open('_graph.json', 'w') as f:
+        json.dump(data, f)
 
 
 # Extracts function names
@@ -43,21 +69,21 @@ def docstring_tokenize(docstr: str):
     return [t for t in docstring_regex_tokenizer.findall(docstr) if t is not None and len(t) > 0]
 
 
-def process_data(inputs):
+def process_data(inputs, monitring):
     # Global calculs and formating
 
     data, graph_node_labels, docs_words = [], [], []
     # num_inits, errors = 0, 0
-    errors = 0
+    # errors = 0
     doc_tokenizer = docstring_tokenize
-    passed = 0
+    # passed = 0
 
     for idx, inp in enumerate(inputs):
         try:
             # print("in inp: ", inp)
-            if idx % 100 == 0:
-                print('%.1f %%    \r' %
-                      (idx / float(len(inputs)) * 100), end="")
+            # if idx % 100 == 0:
+            #     print('%.1f %%    \r' %
+            #           (idx / float(len(inputs)) * 100), end="")
 
             visitor = AstGraphGenerator()
             # astpretty.pprint(parse(inp, mode='exec'))
@@ -103,33 +129,38 @@ def process_data(inputs):
             # print(occurrences)
             # print(ann_types)
 
+            if len(ann_types) == 0:
+                monitring.empty_files.append(monitring.file)
+                return None
+
             data.append({"edges": edge_list,
-                         "backbone_sequence": visitor.terminal_path,
+                         #  "backbone_sequence": visitor.terminal_path,
                          "node_labels": graph_node_labels,
                          "annotation_type": ann_types})
-            passed += 1
+            # passed += 1
 
         except Exception as e:
-            print(e)
-            print(inp)
-            errors += 1
-            traceback.print_exc()
+            monitring.found_error(e, traceback.format_exc())
+            # print(e)
+            # print(inp)
+            # errors += 1
+            # traceback.print_exc()
 
-    print("Generated %d graphs out of %d snippets" %
-          (len(inputs) - errors, len(inputs)))
-    print("Passed: ", passed)
+    # print("Generated %d graphs out of %d snippets" %
+        #   (len(inputs) - errors, len(inputs)))
+    # print("Passed: ", passed)
 
     return data
 
 
-def explore_files(walk_dir):
+def explore_files(walk_dir, monitoring):
     inp = []
     for root, subdirs, files in os.walk(walk_dir):
-        # print('--\nroot = ' + root)
-
+        print('--\nroot = ' + root)
         for subdir in subdirs:
             # print('\t- subdirectory ' + subdir)
-            inp = inp + explore_files(subdir)
+            inp = inp + explore_files(subdir, monitoring)
+            # explore_files(subdir, monitoring)
             # print("ext: ", ext)
         for filename in files:
             file_path = os.path.join(root, filename)
@@ -137,9 +168,16 @@ def explore_files(walk_dir):
 
             with open(file_path, encoding="ISO-8859-1") as f:
                 # print(f_content)
+                monitoring.increment_count()
+                monitoring.treat_file(file_path)
                 f_content = f.read()
                 f_content = f_content.replace("    ", '\t')
-                inp.append(f_content)
+                # print(f_content)
+                graph = process_data([f_content], monitoring)
+                if graph is not None:
+                    # save_jsonl_gz("._graphs.jsonl.gz", graph)
+                    # save(graph)
+                    inp.append(graph)
 
     # print('inp ret: ', inp)
     return inp
@@ -153,7 +191,9 @@ def main():
         exit(1)
     print("Exploring folders ...")
     walk_dir = sys.argv[1]
-    inputs = explore_files(walk_dir)
+    monitoring = Monitoring()
+    outputs = explore_files(walk_dir, monitoring)
+    # explore_files(walk_dir, monitoring)
 
     # print(inputs)
     # inputs = ['y: int = 0\nif x == 0:\n\tprint("hello")\n',
@@ -162,12 +202,25 @@ def main():
     #   'def slice (string: str, start: int, end: int) -> str: \n\treturn string[start:end]']
 
     # print("inputs: ", inputs)
-    print("Start processing inputs.")
-    graphs = process_data(inputs)
+    # print("Start processing inputs.")
+    # graphs = process_data(inputs)
 
     # Save results
-    save_jsonl_gz("._graphs.jsonl.gz", graphs)
+    save_jsonl_gz("._graphs.jsonl.gz", outputs)
     # save_jsonl_gz(args['OUT_FILE_PREFIX'] + "_summary.jsonl.gz", docs)
+
+    print("Done.")
+    print("Generated %d graphs out of %d snippets" %
+          (monitoring.count - len(monitoring.errors), monitoring.count))
+    pprint(monitoring.errors)
+
+    with open('noAnnotations.txt', 'w') as f:
+        for item in monitoring.empty_files:
+            f.write("%s\n" % item)
+
+    with open('logs.txt', 'w') as f:
+        for item in monitoring.errors:
+            f.write("%s\n" % item)
 
 
 if __name__ == "__main__":

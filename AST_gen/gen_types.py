@@ -67,6 +67,11 @@ def t_name_constante(node):
     return node.value
 
 
+def t_num(node):
+    assert hasattr(node, 'n')
+    return node.n
+
+
 def t_master(node):
     if type(node) == typed_ast._ast3.Subscript:
         return t_subscript(node)
@@ -86,6 +91,9 @@ def t_master(node):
         return t_ellipsis(node)
     elif type(node) == typed_ast._ast3.NameConstant:
         return t_name_constante(node)
+    elif type(node) == typed_ast._ast3.Num:
+        return t_num(node)
     else:
         print(
             "\n\n\n ===========================\n  master type ", type(node), "\n ==============================\n\n\n")
+#BoolOp, Call, Slice, ExtSlice
