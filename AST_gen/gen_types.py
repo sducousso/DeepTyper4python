@@ -97,3 +97,6 @@ def t_master(node):
         print(
             "\n\n\n ===========================\n  master type ", type(node), "\n ==============================\n\n\n")
 #BoolOp, Call, Slice, ExtSlice
+
+
+#"Callable[(], AbstractResource)]"

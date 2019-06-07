@@ -49,6 +49,7 @@ from typed_ast.ast3 import Add,     Sub,     Mult,     Div,     FloorDiv,     Mo
 from collections import defaultdict
 
 from gen_types import t_master
+from gen_subtokens import subtokenizer
 
 EDGE_TYPE = {
     'child': 0,
@@ -59,6 +60,7 @@ EDGE_TYPE = {
     'computed_from': 5,
     'return_to': 6,
     'occurrence_of': 7,
+    'subtoken_of': 8,
 }
 
 NODE_TYPE = {
@@ -66,6 +68,7 @@ NODE_TYPE = {
     'terminal': 1,
     'identifier': 2,
     'supernode': 3,
+    'subtoken': 4,
 }
 
 BOOLOP_SYMBOLS = {
@@ -133,6 +136,8 @@ class AstGraphGenerator(NodeVisitor):
         # Contains the type annotations and hits of variables
         self.annotation_types = []
 
+        self.vocab = dict()  # Vocabulary for subtokens
+
         self.terminal_path = []
 
         self.parent = None  # For child edges
@@ -178,6 +183,10 @@ class AstGraphGenerator(NodeVisitor):
                 self.graph[(nid, other)].add('computed_from')
         if edge_type == 'occurrence_of':
             self.graph[(nid, self.representations[label])].add('occurrence_of')
+        if edge_type == 'subtoken_of':
+            print("label subt:", label)
+            print("vocab: ", self.vocab)
+            self.graph[(nid, self.vocab[label])].add('subtoken_of')
             # print("type edge: ", edge_type)
         # print("graph: ", self.graph)
 
@@ -282,8 +291,18 @@ class AstGraphGenerator(NodeVisitor):
         if ann_type is not None:
             ann_type = ann_type.split('#')[0]
             self.annotation_types.append([nid, ann_type])
-
+        
         self.__add_edge(nid, label=label, edge_type='occurrence_of')
+
+        #Adding Subtokens
+        subtokens = subtokenizer(label)
+        print("subtokens: ", subtokens)
+        for subt in subtokens:
+            if subt not in self.vocab.keys():
+                nids = self.__create_node(subt, NODE_TYPE['subtoken'])
+                self.vocab.update({subt: nids})
+            self.__add_edge(nid, label=subt, edge_type='subtoken_of')
+
 
         # print("list supernodes: ", self.representations)
 

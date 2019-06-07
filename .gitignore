@@ -16,8 +16,6 @@ AST_gen/._graphs_bdd.jsonl
 AST_gen/._graphs.jsonl
 AST_gen/._graphs.json
 AST_gen/._graphs.jsonl.gz
-AST_gen/._summary.jsonl.gz
-AST_gen/._summary.jsonl
 AST_gen/test*.json
 AST_gen.*.png
 AST_gen/download_data/data_repos
@@ -36,4 +34,11 @@ gated-graph-neural-network-samples/*.txt
 
 #
 part-ii-project
+
+#
+OpenGNN/data/chem/data
+OpenGNN/data/chem/model_dir
+OpenGNN/data/pcode/model_dir
+OpenGNN/data/chem/*.vocab
+OpenGNN/data/pcode/*.vocab
 

@@ -51,31 +51,13 @@ def save(data):
         json.dump(data, f)
 
 
-# Extracts function names
-
-
-def decl_tokenizer(decl):
-    function_name = re.search('(?<=def )[\w_-]+(?=\(.*\):)', decl).group(0)
-    return splitter(function_name)
-
-
-# Tokenize on spaces and around delimiters.
-# Keep delimiters together only if it makes sense (e.g. parentheses, dots)
-docstring_regex_tokenizer = re.compile(
-    r"[^\s,'\"`.():\[\]=*;>{\}+-/\\]+|\\+|\.+|\(\)|{\}|\[\]|\(+|\)+|:+|\[+|\]+|{+|\}+|=+|\*+|;+|>+|\++|-+|/+")
-
-
-def docstring_tokenize(docstr: str):
-    return [t for t in docstring_regex_tokenizer.findall(docstr) if t is not None and len(t) > 0]
-
-
 def process_data(inputs, monitring):
     # Global calculs and formating
 
     data, graph_node_labels, docs_words = [], [], []
+    data_ann = []
     # num_inits, errors = 0, 0
     # errors = 0
-    doc_tokenizer = docstring_tokenize
     # passed = 0
 
     for idx, inp in enumerate(inputs):
@@ -108,35 +90,34 @@ def process_data(inputs, monitring):
                 type_found = []
                 for elem in supernode[1]:
                     node = elem[1]
-                    # print("elem: ", elem)
                     matches = [ann for ann in ann_types if ann[0] == node]
-                    # print("matches: ", matches)
-                    # if len(graph_node_labels) > 65:
-                    # print("65: ", graph_node_labels[65])
                     if len(matches) > 0:
-                        # print("matches: ", matches)
-                        if len(matches) != 1:
-                            graph_node_labels = [
-                                g for g in graph_node_labels if g != matches[0]]
-                            graph_node_labels.append(matches[0])
                         type_found.append(matches[0][1])
                 if len(type_found) > 0:
                     type_found = sorted(
                         type_found, key=type_found.count, reverse=True)
-                    # print("sorted types: ", type_found)
                     ann_types.append([supernode[0], type_found[0]])
 
+            supernodes = list(visitor.representations.values())
+
+            vocab = [[k, v] for k, v in visitor.vocab.items()]
+            print(vocab)
+
+            # print(supernodes)
             # print(occurrences)
             # print(ann_types)
 
             if len(ann_types) == 0:
                 monitring.empty_files.append(monitring.file)
-                return None
+                return None, None
 
             data.append({"edges": edge_list,
-                         #  "backbone_sequence": visitor.terminal_path,
+                         "backbone_sequence": visitor.terminal_path,
+                         "supernodes": supernodes,
                          "node_labels": graph_node_labels,
-                         "annotation_type": ann_types})
+                         "annotation_type": ann_types,
+                         "vocabulary": vocab})
+            data_ann.append(ann_types)
             # passed += 1
 
         except Exception as e:
@@ -150,16 +131,19 @@ def process_data(inputs, monitring):
         #   (len(inputs) - errors, len(inputs)))
     # print("Passed: ", passed)
 
-    return data
+    return data, data_ann
 
 
 def explore_files(walk_dir, monitoring):
     inp = []
+    ann = []
     for root, subdirs, files in os.walk(walk_dir):
         print('--\nroot = ' + root)
         for subdir in subdirs:
             # print('\t- subdirectory ' + subdir)
-            inp = inp + explore_files(subdir, monitoring)
+            inpt, annt = explore_files(subdir, monitoring)
+            inp += inpt
+            ann += annt
             # explore_files(subdir, monitoring)
             # print("ext: ", ext)
         for filename in files:
@@ -173,14 +157,16 @@ def explore_files(walk_dir, monitoring):
                 f_content = f.read()
                 f_content = f_content.replace("    ", '\t')
                 # print(f_content)
-                graph = process_data([f_content], monitoring)
-                if graph is not None:
+                graph, ann_graph = process_data([f_content], monitoring)
+                if graph is not None and graph != []:
+                    # print(graph[0])
                     # save_jsonl_gz("._graphs.jsonl.gz", graph)
                     # save(graph)
-                    inp.append(graph)
+                    inp.append(graph[0])
+                    ann.append(ann_graph[0])
 
     # print('inp ret: ', inp)
-    return inp
+    return inp, ann
 
 
 def main():
@@ -192,7 +178,7 @@ def main():
     print("Exploring folders ...")
     walk_dir = sys.argv[1]
     monitoring = Monitoring()
-    outputs = explore_files(walk_dir, monitoring)
+    outputs, outputs_ann = explore_files(walk_dir, monitoring)
     # explore_files(walk_dir, monitoring)
 
     # print(inputs)
@@ -206,7 +192,14 @@ def main():
     # graphs = process_data(inputs)
 
     # Save results
-    save_jsonl_gz("._graphs.jsonl.gz", outputs)
+    save_jsonl_gz("._graphs_mock.jsonl.gz", outputs)
+
+    # Labels for int=1, other=0
+    for line in range(len(outputs_ann)):
+        for ann in range(len(outputs_ann[line])):
+            outputs_ann[line][ann][1] = 1 if outputs_ann[line][ann][1] == "int" else 0
+
+    save_jsonl_gz("._graphs_mock_labels.jsonl.gz", outputs_ann)
     # save_jsonl_gz(args['OUT_FILE_PREFIX'] + "_summary.jsonl.gz", docs)
 
     print("Done.")
@@ -214,13 +207,13 @@ def main():
           (monitoring.count - len(monitoring.errors), monitoring.count))
     pprint(monitoring.errors)
 
-    with open('noAnnotations.txt', 'w') as f:
-        for item in monitoring.empty_files:
-            f.write("%s\n" % item)
+    # with open('noAnnotations_mock.txt', 'w') as f:
+    #     for item in monitoring.empty_files:
+    #         f.write("%s\n" % item)
 
-    with open('logs.txt', 'w') as f:
-        for item in monitoring.errors:
-            f.write("%s\n" % item)
+    # with open('logs_mock.txt', 'w') as f:
+    #     for item in monitoring.errors:
+    #         f.write("%s\n" % item)
 
 
 if __name__ == "__main__":
