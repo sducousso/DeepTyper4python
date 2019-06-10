@@ -1,0 +1,12 @@
+README.md
+setup.py
+OpenGNN.egg-info/PKG-INFO
+OpenGNN.egg-info/SOURCES.txt
+OpenGNN.egg-info/dependency_links.txt
+OpenGNN.egg-info/entry_points.txt
+OpenGNN.egg-info/requires.txt
+OpenGNN.egg-info/top_level.txt
+opengnn/__init__.py
+opengnn/config.py
+opengnn/constants.py
+opengnn/runner.py

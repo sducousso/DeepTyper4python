@@ -1,0 +1,643 @@
+str
+int
+bool
+torch.tensor
+list[str]
+float
+any
+torch.longtensor
+list[token]
+vocabulary
+jsondict
+instance
+dict[(str, any)]
+bytes
+dict[(str, torch.longtensor)]
+list[int]
+dict[(str, int)]
+params
+dict[(str, tokenindexer)]
+optional[str]
+seq2seqencoder
+dict[(str, torch.tensor)]
+set[str]
+type
+list[list[str]]
+list[field]
+textfieldembedder
+model
+set[object]
+dict[(str, dict[(str, int)])]
+optional[int]
+list[dict[(str, any)]]
+dict[(str, field)]
+token
+url
+dict[(str, str)]
+tokenizer
+initializerapplicator
+dict[(str, list[str])]
+list[row]
+list[torch.tensor]
+torch.inttensor
+feedforward
+optional[float]
+torch.floattensor
+flask
+set[box]
+baserequest
+iterable[instance]
+list
+optional[baseexception]
+dict[(str, list[int])]
+_signal
+optional[torch.tensor]
+optional[regularizerapplicator]
+number
+application
+list[tuple[(int, int)]]
+torch.optim.optimizer
+list[list[productionrule]]
+streamresponse
+argparse.namespace
+query
+request
+datasetreader
+attention
+json
+activation
+argparse._subparsersaction
+asyncio.abstracteventloop
+optional[type[baseexception]]
+optional[tracebacktype]
+abstractroute
+list[float]
+alert
+object
+dataiterator
+torch.nn.module
+list[instance]
+streamreader
+abstractstreamwriter
+response
+strorurl
+routedef
+date
+list[list[int]]
+cimultidict[str]
+quareltype
+seq2vecencoder
+similarityfunction
+grammarbasedstate
+union[(dict, tuple)]
+iterable[str]
+tree
+list[productionrule]
+optional[asyncio.abstracteventloop]
+dict[str, str]
+_requestcontextmanager
+numbercolumn
+abstractresource
+textio
+_handlertype
+list[jsondict]
+set[basictype]
+callable
+list[wikitablesworld]
+optional[bool]
+connectionkey
+baseexception
+payload
+dict[(int, int)]
+beamsearch
+dict[(str, dict[(str, tuple[(torch.tensor, torch.tensor)])])]
+requesthandler
+asyncio.transport
+optional[basicauth]
+optional[looseheaders]
+_webhandler
+type[t]
+embedding
+transitionfunction
+dict[(int, list[state])]
+dict[(int, list[statetype])]
+server
+baseprotocol
+clientrequest
+clienttimeout
+dict[str, any]
+predictor
+datecolumn
+dict
+numpy.ndarray
+list[any]
+dict[(str, float)]
+sequence[str]
+queue
+dataarray
+defaultdict[(int, list[tuple[(int, int)]])]
+bimpmmatching
+list[list[nlvrlanguage]]
+list[list[list[str]]]
+dict[(int, list[tuple[(int, any)]])]
+optional[tuple[(torch.tensor, torch.tensor)]]
+istr
+pathlike
+clientresponse
+dict[(str, dict[(str, str)])]
+expression
+dict[(str, set[str])]
+set[int]
+list[tuple[(str, str)]]
+dict[(str, iterable[instance])]
+list[set[int]]
+coveragestate
+state
+jsondecoder
+list[bytes]
+tuple[(str, int)]
+_deco
+list[dict[(str, torch.tensor)]]
+config
+tuple[(int, int)]
+deque[instance]
+sequencefield
+archive
+grammarstatelet
+dt
+list[scope]
+rawrequestmessage
+responsehandler
+list[trace]
+grammar
+basictype
+color
+shape
+list[tuple[(date, row)]]
+dict[(str, list[tablecolumn])]
+list[list[tuple[(int, int)]]]
+dict[(str, list)]
+list[optional[str]]
+tuple[(int, any)]
+packedsequence
+packagestype
+immutablemultidict
+_appsignal
+urldispatcher
+asyncio.task[none]
+jsonencoder
+cimultidictproxy[str]
+clientsession
+httpexception
+knowledgegraph
+list[dict[(str, int)]]
+callable[([str], bool)]
+list[predicatetype]
+predicatetype
+union[(str, list[str])]
+list[tensordict]
+optional[dict[(str, str)]]
+list[tuple[(list[str], int)]]
+list[set]
+statetype
+optional[list[int]]
+t
+union[(str, int)]
+union[(int, list)]
+list[tree]
+set[tuple[(int, int)]]
+field
+list[dataarray]
+dict[(tuple[(int, int)], str)]
+multidict
+io[any]
+loosecookies
+requestinfo
+connection
+baserunner
+simplenamespace
+callable[(], none)]
+io
+world
+dict[(str, tuple[(str, str)])]
+dict[(str, type)]
+set[type]
+callable[(], any)]
+dict[(tuple[(int, int)], int)]
+list[atisworld]
+list[quarelworld]
+list[statetype]
+extraction
+type[payload]
+websocketwriter
+optional[loosecookies]
+rawheaders
+basesite
+optional[multimapping[str]]
+exception
+_t_onchunksent
+asyncio.basetransport
+logging.logger
+callable[(any, none)]
+_t
+_func
+_middleware
+optional[sslcontext]
+cursor
+dict[(str, basictype)]
+list[tuple[(str, list[str])]]
+column
+stringcolumn
+list[dict]
+list[dict[(str, cellvaluetype)]]
+wikitableslanguage
+torch.nn.linear
+np.array
+list[baseclass]
+optional[torch.longtensor]
+optional[iterable[instance]]
+iterable[float]
+servererror
+union[(int, dict[(str, int)])]
+iterable[adi.instance]
+batch
+list[list[token]]
+ontonotes
+optional[list[list[tuple[(int, int)]]]]
+set[typedspan]
+list[t]
+dict[(str, union[(str, list[str])])]
+union[(str, bertmodel)]
+optional[seq2seqencoder]
+matrixattention
+metric
+dict[(int, list[list[int]])]
+callable[([statetype], torch.tensor)]
+dict[(int, list[torch.tensor])]
+list[rnnstatelet]
+list[grammarstatelet]
+rnnstatelet
+checkliststatelet
+list[set[str]]
+dict[(str, list[float])]
+callable[([torch.tensor], torch.tensor)]
+transformerconfig
+union[(int, sequence[int])]
+type[torch.nn.modules.rnnbase]
+pytorchseq2vecwrapper
+sequence[sequence[int]]
+pytorchseq2seqwrapper
+bertmodel
+tuple[(str, str)]
+matchtuple
+element
+datetime
+iterable[abstractroutedef]
+contentcoding
+optional[url]
+multidict[union[str, url]]
+optional[str]  
+oserror
+type[exception]
+optional[union[(str, bytes)]]
+basetimercontext
+asyncio.future[_t]
+_handler
+slice
+union[(application, awaitable[application])]
+asyncio.future[none]
+union[(_webhandler, abstractview)]
+list[abstractresource]
+optional[strorurl]
+coroutine[(asyncio.future[any], none)]
+frametype
+basetestserver
+_loop_factory
+dict[(type, list[type])]
+direction
+union[(str, list)]
+node
+union[(int, float)]
+nltkporterstemmer
+wikitablesworld
+union[(int, list[int])]
+torch.nn.parameter
+list[bool]
+optional[type]
+list[configitem]
+iterable[a]
+union[(str, path)]
+union[(int, str)]
+iterable[namedparameter]
+typedstringspan
+list[spacy.tokens.token]
+dict[(str, list[instance])]
+tokentype
+tablecolumn
+defaultdict[(int, list[int])]
+set[tuple[(str, tuple[(int, int)])]]
+grucell
+linear
+list[nlvrlanguage]
+dict[(tuple[(int, any)], set[int])]
+union[(list[any], dict[(str, any)])]
+user
+type[application]
+callable[(], abstractresource)]
+domain
+_resppreparesignal
+_middlewares
+type[request]
+optional[union[(_cimultidict, dict[(str, str)])]]
+optional[_asynciterator]
+websocketready
+mapping[(int, tuple[(str, str)])]
+optional[union[(bool, contentcoding)]]
+simplecookie
+mappingproxytype[str, str]  
+union[sslcontext, none, bool, fingerprint]
+optional[int] 
+optional[int]  
+union[(http.httpversion, str)]
+int  
+streamreader  
+cimultidictproxy[str]  
+rawheaders  
+multidict[multidictproxy[union[str, url]]]
+socket.socket
+optional[baseprotocol]
+optional[basetimercontext]
+union[streamreader, deflatebuffer]  
+mapping[(str, str)]
+bodypartreader
+tuple[(clientresponse, any)]
+union[(bytes, str)]
+dataqueue[wsmessage]
+type[simplenamespace]
+traceconfig
+_requesthandler
+awaitable[any]
+baseconnector
+sslcontext
+optional[exception]
+union[(object, float)]
+multidictproxy[str]
+mimetype
+multidict[str]
+callable[(any, any)]
+pattern[str]
+pattern[bytes]
+optional[dict[str, str]]
+iterable[mapping[(str, any)]]
+multidict[union[str, bytes, filefield]]
+chainmapproxy
+optional[socket.socket]
+optional[callable[(any, none)]]
+type[abstractaccesslogger]
+optional[logging.logger]
+list[basesite]
+callable[(], awaitable[_t])]
+chunktupleasyncstreamiterator
+abstractaccesslogger
+union[(str, pathlib.path)]
+abstractview
+staticdef
+abstractroutedef
+iterable[any]
+_expecthandler
+path
+abstractrulematching
+routesview
+resource
+flowcontroldataqueue[wsmessage]
+dict[str, tuple[str, list[keymethod]]]
+type[clientsession]
+optional[mapping[(str, str)]]
+optional[iterable[str]]
+union[(clienttimeout, object)]
+optional[union[(sslcontext, bool)]]
+optional[simplenamespace]
+flowcontroldataqueue[wsmessage]  
+abstractcookiejar
+none
+_sessionrequestcontextmanager
+tuple[str, ...]
+asyncio.future[bool]
+mapping[int, tuple[str, str]]  
+_wsrequestcontextmanager
+trainer
+iterable[list[str]]
+dict[(str, subcommand)]
+sequence
+list[expression]
+callable[([str, list[token]], dict[(str, list[int])])]
+dict[(str, dict[(str, tuple[(str, str)])])]
+tablequestionknowledgegraph
+list[basictype]
+union[(list[type], type)]
+complextype
+list[tuple[(type, str)]]
+property
+callable[([set[object]], set[object])]
+dict[(box, list[object])]
+callable[([object], str)]
+dict[(str, set[object])]
+dict[(str, cellvaluetype)]
+tablequestioncontext
+list[date]
+comparablecolumn
+row
+dict[(cellvaluetype, int)]
+list[cellvaluetype]
+list[none]
+callable[([str], list[int])]
+list[dict[(str, list[str])]]
+dict[(int, list[str])]
+dict[(str, dict[(str, list[str])])]
+quarelworld
+set
+list[list[tuple[(str, int)]]]
+dict[(str, tablecolumn)]
+callable[([int, int], int)]
+tuple[(baseclass, baseclass2)]
+dict[(str, baseclass)]
+set[baseclass]
+dict[(str, a)]
+dict[(any, list[instance])]
+datasetmingler
+inputsampler
+np.ndarray
+list[tuple[(dict[(str, any)], list[tuple[(int, int)]])]]
+flask.testing.flaskclient
+iterable[batch]
+wordtokenizer
+simplestate
+dict[(int, list[simplestate])]
+list[simplestate]
+stepfunctiontype
+dict[(str, list[torch.tensor])]
+torch.storage
+sequence[t]
+torch.size
+list[tuple[(str, initializer)]]
+sequence[tuple[(str, regularizer)]]
+iterable[tuple[(str, params)]]
+optional[any]
+configitem
+dict[(type, dict[(str, type)])]
+iterator[a]
+dict[(a, float)]
+logging.filehandler
+dict[(tuple[(str, bool)], spacymodeltype)]
+spacymodeltype
+ordereddict
+dict[(str, union[(any, dict[(str, any)])])]
+checkpointer
+optional[learningratescheduler]
+optional[momentumscheduler]
+optional[movingaverage]
+union[(dict, torch.tensor)]
+callable[(], int)]
+torch.optim.lr_scheduler._lrscheduler
+dict[(tuple[(int, any)], int)]
+optional[tags_to_spans_function_type]
+list[typedstringspan]
+set[typedstringspan]
+list[optional[int]]
+dict[(tuple[(int, int)], tuple[(tuple[(int, int)], any)])]
+callable[([jsondict], jsondict)]
+mutablemapping[(str, field)]
+list[dict[(str, str)]]
+list[dict[(str, dict[(str, int)])]]
+dict[(str, list[dict[(str, int)]])]
+wordsplitter
+wordfilter
+wordstemmer
+iterable[int]
+list[list[instance]]
+sequence[union[(str, int)]]
+numpy.dtype
+productionrule
+list[list[list[float]]]
+union[(list[str], list[int])]
+dict[(str, tokenlist)]
+dict[(str, list[list[int]])]
+charactertokenizer
+callable[([str], list[str])]
+callable[(], iterable[instance])]
+callable[([str], instance)]
+callable[([instance], str)]
+textfield
+listfield
+manager
+list[process]
+dict[(str, datasetreader)]
+tuple[(str, any)]
+list[tuple[(str, int)]]
+counter
+list[set[tuple[(int, int)]]]
+optional[tree]
+list[optional[float]]
+list[ontonotessentence]
+ontonotessentence
+callable[([list[t]], bool)]
+optional[list[str]]
+knowledgegraphfield
+list[list[list[jsondict]]]
+regularizerapplicator
+list[dict[(str, numpy.ndarray)]]
+optional[feedforward]
+union[(feedforward, maxout)]
+elmo
+module
+union[(torch.tensor, list[torch.tensor])]
+unigramrecall
+list[model]
+spanextractor
+list[bidirectionalattentionflow]
+list[list[list[tuple[(int, int)]]]]
+union[(torch.tensor, numpy.ndarray)]
+list[union[(list[list[str]], list[str])]]
+dict[(str, list[tuple[(productionrule, int)]])]
+nlvrlanguage
+dict[(str, union[(int, float)])]
+lambdagrammarstatelet
+mapping[(int, sequence[grammarbasedstate])]
+dict[(int, tuple[(int, int)])]
+list[list[list[int]]]
+union[(torch.tensor, list[list[list[int]]])]
+list[dict[(tuple[(int, any)], set[int])]]
+tuple[(torch.tensor, torch.tensor)]
+supervisiontype
+dict[(tuple[(str, str)], list[str])]
+dict[(str, tuple[(torch.tensor, torch.tensor)])]
+list[checkliststatelet]
+sequence[coveragestate]
+dict[(str, actionrepresentation)]
+actionrepresentation
+sequence[grammarbasedstate]
+dict[(int, list[tuple[(int, int)]])]
+callable[([packedsequence, optional[rnnstate]], tuple[(union[(packedsequence, torch.tensor)], rnnstate)])]
+optional[rnnstate]
+rnnstatestorage
+list[optional[tuple[(torch.tensor, torch.tensor)]]]
+tuple[(torch.floattensor, torch.floattensor)]
+list[np.ndarray]
+union[(float, sequence[float])]
+union[(int, torch.longtensor)]
+union[(activation, list[activation])]
+union[(float, list[float])]
+dict[(int, str)]
+torch.nn.modules.rnnbase
+transformerencoder
+list[list[torch.tensor]]
+dict[(str, tokenembedder)]
+dict[(str, union[(list[str], dict[(str, str)])])]
+dict[(str, bertmodel)]
+openaitransformer
+tokenindexer
+list[extraction]
+mapping[(str, int)]
+list[switch]
+timedelta
+list[groupuser]
+scope
+smtp
+_cimultidict
+bytestring
+text
+io[str]
+_asynciterable
+optional[union[(int, float)]]
+optional[union[bytes, payload]]
+mapping[(str, optional[str])]
+union[(sequence[tuple[(str, str)]], mapping[(str, str)])]
+bytearray
+union[(str, bytes)]
+optional[list[trace]]
+union[(abstractview, _webhandler)]
+resourceroute
+resourcesview
+looseheaders
+union[(sslcontext, bool)]
+testserver
+list[dict[(str, dict[(str, str)])]]
+defaultdict[(str, list[str])]
+union[(a, list[a])]
+union[(a, b)]
+list[a]
+tuple[(a, c)]
+set[a]
+list[tuple[(str, params)]]
+dict[(str, list[tokentype])]
+list[tuple[(str, list[int])]]
+optional[dict[(str, torch.longtensor)]]
+list[spaninformation]
+atisworld
+doc
+list[state]
+torch.bytetensor
+sequence[sequence[sequence[int]]]
+apierror
+basicautherror
+optional[history]

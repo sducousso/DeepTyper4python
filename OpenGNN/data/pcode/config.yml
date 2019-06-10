@@ -1,0 +1,29 @@
+# Example parameters (this does not cover every parameter)
+
+model_dir: model_dir
+
+data:
+  train_graphs_file: data/.graphs_mock_train.jsonl
+  train_labels_file: data/._graphs_mock_labels.jsonl
+
+  eval_graphs_file: data/._graphs_mock_valid.jsonl
+  eval_labels_file: data/._graphs_mock_labels_valid.jsonl
+
+  node_vocabulary: node.vocab
+  edge_vocabulary: edge.vocab
+  type_vocabulary: type.vocab
+
+  
+params:
+  learning_rate: 0.01
+  param_init: 0.1
+  clip_gradients: 1.
+  maximum_iterations: 50
+
+train:
+  batch_size: 1024
+  bucket_width: 1
+  train_steps: 10
+  maximum_features_size: 200
+  maximum_labels_size: 50
+  sample_buffer_size: 10000

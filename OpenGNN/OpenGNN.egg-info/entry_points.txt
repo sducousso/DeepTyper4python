@@ -1,0 +1,4 @@
+[console_scripts]
+ognn-build-vocab = opengnn.bin.build_vocab:main
+ognn-main = opengnn.bin.main:main
+
