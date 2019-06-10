@@ -101,7 +101,7 @@ def process_data(inputs, monitring):
             supernodes = list(visitor.representations.values())
 
             vocab = [[k, v] for k, v in visitor.vocab.items()]
-            print(vocab)
+            # print(vocab)
 
             # print(supernodes)
             # print(occurrences)
