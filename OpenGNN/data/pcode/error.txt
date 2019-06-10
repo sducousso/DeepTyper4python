@@ -1,0 +1,62 @@
+Traceback (most recent call last):
+  File "/home/soline/.local/bin/ognn-main", line 11, in <module>
+    load_entry_point('OpenGNN==0.1.1', 'console_scripts', 'ognn-main')()
+  File "/home/soline/PRE/OpenGNN/opengnn/bin/main.py", line 73, in main
+    runner.train_and_evaluate()
+  File "/home/soline/PRE/OpenGNN/opengnn/runner.py", line 149, in train_and_evaluate
+    tf.estimator.train_and_evaluate(self._estimator, train_spec, eval_spec)
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow_estimator/python/estimator/training.py", line 471, in train_and_evaluate
+    return executor.run()
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow_estimator/python/estimator/training.py", line 611, in run
+    return self.run_local()
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow_estimator/python/estimator/training.py", line 712, in run_local
+    saving_listeners=saving_listeners)
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow_estimator/python/estimator/estimator.py", line 358, in train
+    loss = self._train_model(input_fn, hooks, saving_listeners)
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow_estimator/python/estimator/estimator.py", line 1124, in _train_model
+    return self._train_model_default(input_fn, hooks, saving_listeners)
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow_estimator/python/estimator/estimator.py", line 1151, in _train_model_default
+    input_fn, model_fn_lib.ModeKeys.TRAIN))
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow_estimator/python/estimator/estimator.py", line 992, in _get_features_and_labels_from_input_fn
+    self._call_input_fn(input_fn, mode))
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow_estimator/python/estimator/estimator.py", line 1079, in _call_input_fn
+    return input_fn(**kwargs)
+  File "/home/soline/PRE/OpenGNN/opengnn/models/model.py", line 164, in _input_fn
+    example_size_fns=example_size_fns))
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/data/ops/dataset_ops.py", line 1605, in apply
+    return DatasetV1Adapter(super(DatasetV1, self).apply(transformation_func))
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/data/ops/dataset_ops.py", line 1127, in apply
+    dataset = transformation_func(self)
+  File "/home/soline/PRE/OpenGNN/opengnn/utils/data.py", line 82, in <lambda>
+    return lambda dataset: batch_fn(dataset, batch_size)
+  File "/home/soline/PRE/OpenGNN/opengnn/models/model.py", line 133, in batch_fn
+    (feat_batch_fn, labels_batch_fn))
+  File "/home/soline/PRE/OpenGNN/opengnn/utils/data.py", line 220, in diverse_batch
+    return _zip_diverse_batch(dataset, batch_size, batch_fns)
+  File "/home/soline/PRE/OpenGNN/opengnn/utils/data.py", line 255, in _zip_diverse_batch
+    batched_datasets.append(batch_fn(indexed_dataset, batch_size))
+  File "/home/soline/PRE/OpenGNN/opengnn/inputters/token_embedder.py", line 147, in batch
+    return diverse_batch(dataset, batch_size, batch_fn_map)
+  File "/home/soline/PRE/OpenGNN/opengnn/utils/data.py", line 218, in diverse_batch
+    dataset, batch_size, batch_fns, default_batch_fn)
+  File "/home/soline/PRE/OpenGNN/opengnn/utils/data.py", line 239, in _dict_diverse_batch
+    keyed_dataset = dataset.map(key_fn)
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/data/ops/dataset_ops.py", line 1580, in map
+    MapDataset(self, map_func, preserve_cardinality=False))
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/data/ops/dataset_ops.py", line 2737, in __init__
+    map_func, self._transformation_name(), dataset=input_dataset)
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/data/ops/dataset_ops.py", line 2124, in __init__
+    self._function.add_to_graph(ops.get_default_graph())
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/function.py", line 490, in add_to_graph
+    self._create_definition_if_needed()
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/function.py", line 341, in _create_definition_if_needed
+    self._create_definition_if_needed_impl()
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/function.py", line 355, in _create_definition_if_needed_impl
+    whitelisted_stateful_ops=self._whitelisted_stateful_ops)
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/function.py", line 883, in func_graph_from_py_func
+    outputs = func(*func_graph.inputs)
+  File "/usr/local/lib/python3.6/dist-packages/tensorflow/python/data/ops/dataset_ops.py", line 2099, in tf_data_structured_function_wrapper
+    ret = func(*nested_args)
+  File "/home/soline/PRE/OpenGNN/opengnn/utils/data.py", line 236, in key_fn
+    def key_fn(data): return {key: data[key]}
+KeyError: 'features'

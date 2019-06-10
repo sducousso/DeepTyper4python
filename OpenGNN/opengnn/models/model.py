@@ -54,6 +54,7 @@ class Model(ABC):
 
     def model_fn(self):
         def _model_fn(features, labels, mode, params, config=None):
+            print("model_fn features: ", features)
             if mode == tf.estimator.ModeKeys.TRAIN:
                 with tf.variable_scope(self.name):
                     # build models graph
@@ -134,7 +135,8 @@ class Model(ABC):
 
                 example_size_fns = [features_size_fn, labels_size_fn]
                 bucket_widths = [features_bucket_width, labels_bucket_width]
-                maximum_example_size = (maximum_features_size, maximum_labels_size)
+                maximum_example_size = (
+                    maximum_features_size, maximum_labels_size)
 
             else:
                 dataset = feat_dataset
@@ -152,7 +154,8 @@ class Model(ABC):
                     sample_buffer_size,
                     reshuffle_each_iteration=False,
                     seed=seed)
-            dataset = dataset.map(process_fn, num_parallel_calls=num_threads or 4)
+            dataset = dataset.map(
+                process_fn, num_parallel_calls=num_threads or 4)
             dataset = dataset.apply(filter_examples_by_size(
                 example_size_fns=example_size_fns,
                 maximum_example_sizes=maximum_example_size))

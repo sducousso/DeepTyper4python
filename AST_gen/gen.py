@@ -184,8 +184,8 @@ class AstGraphGenerator(NodeVisitor):
         if edge_type == 'occurrence_of':
             self.graph[(nid, self.representations[label])].add('occurrence_of')
         if edge_type == 'subtoken_of':
-            print("label subt:", label)
-            print("vocab: ", self.vocab)
+            # print("label subt:", label)
+            # print("vocab: ", self.vocab)
             self.graph[(nid, self.vocab[label])].add('subtoken_of')
             # print("type edge: ", edge_type)
         # print("graph: ", self.graph)
@@ -296,7 +296,7 @@ class AstGraphGenerator(NodeVisitor):
 
         #Adding Subtokens
         subtokens = subtokenizer(label)
-        print("subtokens: ", subtokens)
+        # print("subtokens: ", subtokens)
         for subt in subtokens:
             if subt not in self.vocab.keys():
                 nids = self.__create_node(subt, NODE_TYPE['subtoken'])

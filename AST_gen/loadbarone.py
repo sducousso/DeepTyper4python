@@ -97,6 +97,8 @@ def process_data(inputs, monitring):
                     type_found = sorted(
                         type_found, key=type_found.count, reverse=True)
                     ann_types.append([supernode[0], type_found[0]])
+            ann_types = [list(t) for t in set(tuple(element)
+                                              for element in ann_types)]
 
             supernodes = list(visitor.representations.values())
 
@@ -195,9 +197,9 @@ def main():
     save_jsonl_gz("._graphs_mock.jsonl.gz", outputs)
 
     # Labels for int=1, other=0
-    for line in range(len(outputs_ann)):
-        for ann in range(len(outputs_ann[line])):
-            outputs_ann[line][ann][1] = 1 if outputs_ann[line][ann][1] == "int" else 0
+    # for line in range(len(outputs_ann)):
+    #     for ann in range(len(outputs_ann[line])):
+    #         outputs_ann[line][ann][1] = 1 if outputs_ann[line][ann][1] == "int" else 0
 
     save_jsonl_gz("._graphs_mock_labels.jsonl.gz", outputs_ann)
     # save_jsonl_gz(args['OUT_FILE_PREFIX'] + "_summary.jsonl.gz", docs)
