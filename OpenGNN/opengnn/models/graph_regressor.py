@@ -46,11 +46,12 @@ class GraphRegressor(Model):
                 node_features=node_features,
                 graph_sizes=graph_sizes,
                 mode=mode)
-
+        # find sigmoide function
         output_layer = tf.layers.Dense(
             self.labels_inputter.features_size,
             name="node_output_layer")
 
+        # with node representation
         output = output_layer(graph_state)
         return output, output
 
@@ -97,6 +98,7 @@ class GraphRegressor(Model):
         labels_vectors = labels['features']
         batch_size = tf.cast(tf.shape(labels_vectors)[0], tf.float32)
 
+    #cross entropy
         diff = labels_vectors - outputs
         loss = tf.reduce_sum(0.5 * tf.square(diff)) / batch_size
         return loss, loss
