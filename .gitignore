@@ -40,7 +40,7 @@ OpenGNN/data/chem/data
 OpenGNN/data/chem/model_dir
 OpenGNN/data/pcode/model_dir
 OpenGNN/data/chem/*.vocab
-#OpenGNN/data/pcode/*.vocab
+OpenGNN/data/pcode/*.vocab
 
 
 #

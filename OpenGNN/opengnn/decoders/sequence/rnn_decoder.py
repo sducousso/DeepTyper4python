@@ -32,11 +32,12 @@ class RNNDecoder(SequenceDecoder):
                memory_sequence_len=None,
                memory_out_ids=None,
                mode=tf.estimator.ModeKeys.TRAIN):
-
+        print("decode input:", inputs)
         if (sampling_probability is not None and
                 (isinstance(sampling_probability, tf.Tensor) or sampling_probability > 0.0)):
             if embedding is None:
-                raise ValueError("embedding argument must be set when using scheduled sampling")
+                raise ValueError(
+                    "embedding argument must be set when using scheduled sampling")
 
             tf.summary.scalar("sampling_probability", sampling_probability)
             helper = tf.contrib.seq2seq.ScheduledEmbeddingTrainingHelper(
@@ -77,7 +78,8 @@ class RNNDecoder(SequenceDecoder):
 
         if hasattr(state, 'alignment_history') and \
            not isinstance(state.alignment_history, tuple):
-            attention = tf.transpose(state.alignment_history.stack(), (1, 0, 2))
+            attention = tf.transpose(
+                state.alignment_history.stack(), (1, 0, 2))
             decoder_loss = self.coverage_loss(attention, memory_sequence_len)
         else:
             decoder_loss = None
@@ -198,5 +200,6 @@ class RNNDecoder(SequenceDecoder):
             [tf.zeros((batch_size, 1, output_time), dtype=tf.float32),
              tf.cumsum(attention_alignments, axis=1)[:, :-1, :]],
             axis=1)
-        bounded_coverage = tf.minimum(cumulated_attention, attention_alignments)
+        bounded_coverage = tf.minimum(
+            cumulated_attention, attention_alignments)
         return self.coverage_loss_lambda * tf.reduce_sum(bounded_coverage, axis=2)

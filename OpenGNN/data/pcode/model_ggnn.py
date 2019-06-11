@@ -1,6 +1,7 @@
 import opengnn as ognn
 from opengnn.models.graph_to_annotation import GraphToAnnotation
 from opengnn.inputters.is_int_inputter import IsIntInputter
+from opengnn.decoders.int_decoder import IntDecoder
 
 
 # def subtokenizer(token):
@@ -14,16 +15,22 @@ from opengnn.inputters.is_int_inputter import IsIntInputter
 
 def model():
     return GraphToAnnotation(
-        source_inputter=ognn.inputters.TokenEmbedder(
-            vocabulary_file_key="node_vocabulary",
-            embedding_size=16),  # Size of hidden vectors
+        source_inputter=ognn.inputters.GraphEmbedder(
+            node_embedder=ognn.inputters.TokenEmbedder(
+                vocabulary_file_key="node_vocabulary",
+                embedding_size=16
+            ),
+            edge_vocabulary_file_key="edge_vocabulary",
+        ),  # Size of hidden vectors
         target_inputter=IsIntInputter(),
         encoder=ognn.encoders.GGNNEncoder(
             num_timesteps=[2, 2],
             node_feature_size=16),
+        # decoder=IntDecoder(),
         decoder=ognn.decoders.sequence.RNNDecoder(
             num_units=16,
-            num_layers=1),
+            num_layers=2
+        ),
         name="pythonAnnotationModel")
 
     # return ognn.models.GraphRegressor(

@@ -3,11 +3,11 @@
 model_dir: model_dir
 
 data:
-  train_graphs_file: data/.graphs_mock_train.jsonl
-  train_labels_file: data/._graphs_mock_labels.jsonl
+  train_graphs_file: ./data/._graphs_mock_train.jsonl
+  train_labels_file: ./data/._graphs_mock_labels.jsonl
 
-  eval_graphs_file: data/._graphs_mock_valid.jsonl
-  eval_labels_file: data/._graphs_mock_labels_valid.jsonl
+  eval_graphs_file: ./data/._graphs_mock_valid.jsonl
+  eval_labels_file: ./data/._graphs_mock_labels_valid.jsonl
 
   node_vocabulary: node.vocab
   edge_vocabulary: edge.vocab
@@ -24,6 +24,6 @@ train:
   batch_size: 1024
   bucket_width: 1
   train_steps: 10
-  maximum_features_size: 200
+  maximum_features_size: 1000
   maximum_labels_size: 50
   sample_buffer_size: 10000

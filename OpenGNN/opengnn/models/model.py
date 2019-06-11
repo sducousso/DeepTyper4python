@@ -54,7 +54,7 @@ class Model(ABC):
 
     def model_fn(self):
         def _model_fn(features, labels, mode, params, config=None):
-            print("model_fn features: ", features)
+            print("\nmodel_fn features: ", features)
             if mode == tf.estimator.ModeKeys.TRAIN:
                 with tf.variable_scope(self.name):
                     # build models graph

@@ -16,7 +16,7 @@ from opengnn.decoders.sequence.sequence_decoder import SequenceDecoder, get_samp
 from opengnn.decoders.sequence.hybrid_pointer_decoder import HybridPointerDecoder
 
 
-def shift_target_sequence(inputter, data: Dict[str, tf.Tensor])-> Dict[str, tf.Tensor]:
+def shift_target_sequence(inputter, data: Dict[str, tf.Tensor]) -> Dict[str, tf.Tensor]:
     """Prepares shifted target sequences.
     Given a target sequence ``a b c``, the decoder input should be
     ``<s> a b c`` and the output should be ``a b c </s>`` for the dynamic
@@ -51,7 +51,8 @@ def check_valid_copying_inputters(source_inputter, target_inputter):
         raise ValueError("HybridPointerDecoder requires a GraphEmbedder source inputter"
                          "with a underlying CopyingTokenEmbedder")
     if not isinstance(target_inputter, CopyingTokenEmbedder):
-        raise ValueError("HybridPointerDecoder requires a CopyingTokenEmbedder target inputter")
+        raise ValueError(
+            "HybridPointerDecoder requires a CopyingTokenEmbedder target inputter")
 
 
 class GraphToSequence(Model):
@@ -76,7 +77,7 @@ class GraphToSequence(Model):
                  labels,
                  mode,
                  params,
-                 config=None)-> Tuple[tf.Tensor, tf.Tensor]:
+                 config=None) -> Tuple[tf.Tensor, tf.Tensor]:
         """
         Args:
             features: a dictionary containing the inputs necessary to run a graph neural network:
@@ -138,13 +139,15 @@ class GraphToSequence(Model):
         if labels is not None:
             decoder_input = labels["ids"]
             output_len = labels["length"]
-
+            print("decoder_input: ", decoder_input)
             with tf.variable_scope("decoder") as scope:
-                decoder_emb_input = self.labels_inputter.transform((decoder_input, None), mode)
+                decoder_emb_input = self.labels_inputter.transform(
+                    (decoder_input, None), mode)
 
                 sampling_probability = get_sampling_probability(
                     tf.train.get_or_create_global_step(),
-                    read_probability=params.get("scheduled_sampling_read_probability"),
+                    read_probability=params.get(
+                        "scheduled_sampling_read_probability"),
                     schedule_type=params.get("scheduled_sampling_type"),
                     k=params.get("scheduled_sampling_k"))
 
@@ -212,16 +215,19 @@ class GraphToSequence(Model):
             if self.use_copying:
                 # Fetch tokens from input sequence (non-pointer ids will get mapped to padding)
                 pointer_ids = ids - target_vocab_size + 1
-                pointer_ids = tf.clip_by_value(pointer_ids, 0, tf.reduce_max(pointer_ids))
+                pointer_ids = tf.clip_by_value(
+                    pointer_ids, 0, tf.reduce_max(pointer_ids))
                 batch_size = tf.shape(pointer_maps)[0]
                 padded_pointer_maps = tf.concat(
-                    [tf.fill((batch_size, 1), constants.PADDING_TOKEN), pointer_maps],
+                    [tf.fill((batch_size, 1), constants.PADDING_TOKEN),
+                     pointer_maps],
                     axis=-1)
                 pointer_tokens = batch_gather(padded_pointer_maps, pointer_ids)
 
                 # Pick token from either normal vocab or input sequences depending on ids
                 target_tokens = tf.where(
-                    tf.greater_equal(ids, self.labels_inputter.vocabulary_size),
+                    tf.greater_equal(
+                        ids, self.labels_inputter.vocabulary_size),
                     pointer_tokens,
                     target_tokens)
 
@@ -233,7 +239,7 @@ class GraphToSequence(Model):
 
         return (logits, decoder_loss), predictions
 
-    def compute_loss(self, _, labels, outputs, params, mode: tf.estimator.ModeKeys)-> tf.Tensor:
+    def compute_loss(self, _, labels, outputs, params, mode: tf.estimator.ModeKeys) -> tf.Tensor:
         # extract labels and batch info
         label_ids = labels["ids_out"]
         sequence_lens = labels["length"]
@@ -290,7 +296,8 @@ class GraphToSequence(Model):
         return eval_metric_ops
 
     def process_prediction(self, prediction):
-        prediction_tokens = [token.decode('utf-8') for token in prediction['tokens']]
+        prediction_tokens = [token.decode('utf-8')
+                             for token in prediction['tokens']]
         cropped_tokens = prediction_tokens[:find(
             prediction_tokens, constants.END_OF_SENTENCE_TOKEN)]
         return cropped_tokens

@@ -35,7 +35,8 @@ class TokenEmbedder(Inputter):
 
     def extract_tensors(self):
         def _tensor_extractor(sample):
-            size = len(sample) if self.truncated_sentence_size is None else self.truncated_sentence_size
+            size = len(
+                sample) if self.truncated_sentence_size is None else self.truncated_sentence_size
             return {"labels": [token.lower() if self.lowercase else token for token in sample][:size]}
 
         tensor_types = {"labels": tf.string}
@@ -46,8 +47,20 @@ class TokenEmbedder(Inputter):
         super().initialize(metadata)
         self.vocabulary_file = metadata[self.vocabulary_file_key]
 
+        # Remove empty lines
+        with open(self.vocabulary_file, "r") as f:
+            content = f.readlines()
+        while '\n' in content:
+            content.remove('\n')
+        with open(self.vocabulary_file, "w") as f:
+            for line in content:
+                f.write(line)
+
         self.vocabulary_size = count_lines(
             self.vocabulary_file) + 1
+
+        # print("\n\n\nvocab size: ", self.vocabulary_size, "\n\n\n")
+
         self.vocabulary = tf.contrib.lookup.index_table_from_file(
             self.vocabulary_file,
             vocab_size=self.vocabulary_size - 1,
@@ -116,7 +129,8 @@ class SubtokenEmbedder(TokenEmbedder):
             for i, token in enumerate(sample):
                 for subtoken in self.subtokenizer(token):
                     indices.append(i)
-                    labels.append(subtoken.lower() if self.lowercase else subtoken)
+                    labels.append(subtoken.lower()
+                                  if self.lowercase else subtoken)
             return {"indices": indices, "labels": labels, "length": len(sample)}
 
         tensor_types = {
@@ -131,11 +145,12 @@ class SubtokenEmbedder(TokenEmbedder):
         }
         return _tensor_extractor, tensor_types, tensor_shapes
 
-    def _process(self, data: Dict[str, tf.Tensor], input_data)-> Dict[str, tf.Tensor]:
+    def _process(self, data: Dict[str, tf.Tensor], input_data) -> Dict[str, tf.Tensor]:
         indices = tf.cast(tf.expand_dims(data['indices'], 1), tf.int64)
 
         ids = tf.cast(self.vocabulary.lookup(data['labels']), tf.int64)
-        ids = tf.SparseTensor(indices, ids, (tf.cast(data['length'], tf.int64),))
+        ids = tf.SparseTensor(
+            indices, ids, (tf.cast(data['length'], tf.int64),))
 
         data['ids'] = ids
         del data['indices']

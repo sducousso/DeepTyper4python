@@ -15,14 +15,14 @@ class IsIntInputter(Inputter):
 
     def extract_tensors(self):
         def _tensor_extractor(sample):
-            res = [False for x in self.features_size]
+            res = [0 for x in range(self.features_size)]
             for idx_node in range(len(sample)):
                 if sample[idx_node][1] == "int":
-                    res[idx_node] = True
+                    res[idx_node] = 1
 
             return {"features": res}
 
-        tensor_types = {"features": tf.bool}
+        tensor_types = {"features": tf.float32}
         tensor_shapes = {"features": tf.TensorShape([self.features_size])}
         return _tensor_extractor, tensor_types, tensor_shapes
 
@@ -33,7 +33,8 @@ class IsIntInputter(Inputter):
         return dataset.batch(batch_size)
 
     def transform(self, inputs, lengths=None):
+        print("transform: ", inputs)
         return inputs
 
     def get_example_size(self, example):
-        return 1
+        return len(example)
